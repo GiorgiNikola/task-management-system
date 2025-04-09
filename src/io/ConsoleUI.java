@@ -4,15 +4,15 @@ import src.model.LimitedTimeTask;
 import src.model.RepeatableTask;
 import src.model.Task;
 import src.service.TaskService;
-import src.storage.TaskStorage;
 import src.utils.Utils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleUI {
     private final Scanner scanner = new Scanner(System.in);
-    private final TaskService taskService = new TaskService(new TaskStorage());
+    private final TaskService taskService = new TaskService();
     private String username;
 
     public void start() {
@@ -124,8 +124,8 @@ public class ConsoleUI {
     }
 
     private void printTaskList() {
-        String[] names = taskService.getAllTaskNames();
-        if (names.length == 0) {
+        List<String> names = taskService.getAllTaskNames();
+        if (names.isEmpty()) {
             System.out.println("No tasks found.");
         }
         else {
