@@ -4,44 +4,57 @@ import src.model.BasicTask;
 import src.model.LimitedTimeTask;
 import src.model.RepeatableTask;
 import src.model.Task;
-import src.storage.TaskStorage;
+import src.storage.FileStorage;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class TaskService {
-    private final TaskStorage storage;
+    private Map<String, Task> taskMap;
 
-    public TaskService(TaskStorage storage) {
-        this.storage = storage;
+    public TaskService() {
+        this.taskMap = FileStorage.loadTasks();
     }
 
     public boolean createBasicTask(String taskName, String description, String creatorName) {
-        return storage.addTask(new BasicTask(taskName, description, creatorName));
+        return addTask(new BasicTask(taskName, description, creatorName));
     }
 
     public boolean createLimitedTask(String taskName, String description, String creatorName, LocalDateTime deadline) {
-        return storage.addTask(new LimitedTimeTask(taskName, description, creatorName, deadline));
+        return addTask(new LimitedTimeTask(taskName, description, creatorName, deadline));
     }
 
     public boolean createRepeatableTask(String name, String desc, String creator, int repeatCount, LocalDateTime date) {
-        return storage.addTask(new RepeatableTask(name, desc, creator, repeatCount, date));
+        return addTask(new RepeatableTask(name, desc, creator, repeatCount, date));
     }
 
-    public String[] getAllTaskNames() {
-        return storage.getAllTaskNames().toArray(new String[0]);
+    public boolean addTask(Task task) {
+        if (taskMap.containsKey(task.getTaskName()))
+            return false;
+        taskMap.put(task.getTaskName(), task);
+        update();
+        return true;
     }
 
-    public Task getTask(String name) {
-        return storage.getTask(name);
+    public List<String> getAllTaskNames() {
+        return new ArrayList<>(taskMap.keySet());
+    }
+
+    public Task getTask(String taskName) {
+        return taskMap.get(taskName);
     }
 
     public boolean deleteTask(String name) {
-        return storage.removeTask(name);
+        boolean removed = taskMap.remove(name) != null;
+        if (removed) update();
+        return removed;
     }
 
     public boolean updateTask(String taskName, String newDescription, LocalDateTime newDeadline,
                               Integer newRepeatCount, LocalDateTime newRepeatDate) {
-        Task task =  storage.getTask(taskName);
+        Task task = getTask(taskName);
         if (task == null) {
             return false;
         }
@@ -54,7 +67,11 @@ public class TaskService {
             ((RepeatableTask) task).setRepeatCount(newRepeatCount);
             ((RepeatableTask) task).setRepeatDate(newRepeatDate);
         }
-        storage.update();
+        update();
         return true;
+    }
+
+    public void update() {
+        FileStorage.saveTasks(taskMap.values());
     }
 }
