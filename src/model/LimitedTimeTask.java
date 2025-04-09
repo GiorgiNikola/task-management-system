@@ -20,7 +20,12 @@ public class LimitedTimeTask extends Task {
 
     @Override
     public String getTaskDetails() {
-        return "BasicTask [Name: " + getTaskName() + ", Description: " + getDescription()
+        return "LimitedTime [Name: " + getTaskName() + ", Description: " + getDescription()
                 + ", Creator: " + getCreatorName() + ", Deadline: " + getDeadline() +"]";
+    }
+
+    @Override
+    public String serialize() {
+        return "LIMITED|" + getTaskName() + "|" + getDescription() + "|" + getCreatorName() + "|" + getDeadline();
     }
 }

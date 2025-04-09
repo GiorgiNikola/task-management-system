@@ -28,4 +28,6 @@ public abstract class Task {
     }
 
     public abstract String getTaskDetails();
+
+    public abstract String serialize();
 }
