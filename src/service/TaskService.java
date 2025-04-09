@@ -54,6 +54,7 @@ public class TaskService {
             ((RepeatableTask) task).setRepeatCount(newRepeatCount);
             ((RepeatableTask) task).setRepeatDate(newRepeatDate);
         }
+        storage.update();
         return true;
     }
 }

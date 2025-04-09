@@ -30,8 +30,14 @@ public class RepeatableTask extends Task {
 
     @Override
     public String getTaskDetails() {
-        return "BasicTask [Name: " + getTaskName() + ", Description: " + getDescription()
+        return "Repeatable [Name: " + getTaskName() + ", Description: " + getDescription()
                 + ", Creator: " + getCreatorName() + ", Repeat Count: " + getRepeatCount()
                 + ", Repeat Date: " + getRepeatDate() + "]";
+    }
+
+    @Override
+    public String serialize() {
+        return "REPEATABLE|" + getTaskName() + "|" + getDescription() + "|" + getCreatorName() + "|" + getRepeatCount()
+                + "|" + getRepeatDate();
     }
 }
